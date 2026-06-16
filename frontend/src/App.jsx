@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./App.css";
+import Navbar from "./components/navbar";
+import {FaUserGraduate } from "react-icons/fa";
+import { MdSchool } from "react-icons/md";
+import { FaChartLine } from "react-icons/fa"; 
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -9,6 +14,7 @@ function App() {
   const [department, setDepartment] = useState("");
   const [email, setEmail] = useState("");
   const [editId, setEditId] = useState(null);
+  const [search, setSearch] = useState("");
 
   // Fetch students
   useEffect(() => {
@@ -97,86 +103,190 @@ function App() {
     }
   };
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Student Management System</h1>
+    <>
+    <Navbar />
+    {/* Statistics Section */}
+    <div className="container mt-4">
+      <div className="row">
 
-      <h2>Add Student</h2>
-
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br /><br />
-
-      <input
-        type="text"
-        placeholder="Roll No"
-        value={rollNo}
-        onChange={(e) => setRollNo(e.target.value)}
-      />
-      <br /><br />
-
-      <input
-        type="text"
-        placeholder="Department"
-        value={department}
-        onChange={(e) => setDepartment(e.target.value)}
-      />
-      <br /><br />
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br /><br />
-
-      <button onClick={addStudent}>
-        Add Student
-      </button>
-       <button
-          onClick={() => updateStudent(editId)}          
-          style={{marginLeft:"10px"}}
-      >
-        Update Student
-      </button>
-
-      <hr />
-
-      <h2>Student List</h2>
-
-      {students.map((student) => (
-        <div
-          key={student.id}
-          style={{
-            border: "1px solid black",
-            padding: "10px",
-            margin: "10px",
-          }}
-        >
-          <h3>Name:{student.name}</h3>
-          <p><b>Roll No:</b> {student.roll_no}</p>
-          <p><b>Department:</b> {student.department}</p>
-          <p><b>Email:</b> {student.email}</p>                                                                         
-          <button onClick={()=> deleteStudent(student.id)}>Delete
-          </button>
-          <br />
-          <button onClick={()=> {
-            setName(student.name);
-            setRollNo(student.roll_no);
-            setDepartment(student.department);
-            setEmail(student.email);
-            setEditId(student.id);
-          }} style={{marginLeft:"10px"}}>Edit</button>
-         
-         
-
+        <div className="col-md-4">
+          <div className="card shadow p-3 text-center stats-card">
+            <h5>
+              <FaUserGraduate className="me-2" />
+              Total Students
+            </h5>
+            <h2>{students.length}</h2>
+          </div>
         </div>
-      ))}
+
+        <div className="col-md-4">
+          <div className="card shadow p-3 text-center stats-card">
+            <h5>
+              <MdSchool className="me-2" />
+              Departments
+            </h5>
+            <h2>{new Set(students.map(student => student.department)).size}</h2>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card shadow p-3 text-center stats-card">
+            <h5>
+              <FaChartLine className="me-2" />
+              Attendance
+            </h5>
+            <h2>95%</h2>
+          </div>
+        </div>
+
+      </div>
     </div>
+    
+      <div className="container mt-4">
+  <div className="row">
+
+    {/* Left Side Form */}
+    <div className="col-md-4">
+      <div className="card shadow p-4">
+
+        <h3 className="text-center mb-4">
+          Student Form
+        </h3>
+
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Roll No"
+          value={rollNo}
+          onChange={(e) => setRollNo(e.target.value)}
+        />
+
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Department"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+        />
+
+        <input
+          type="email"
+          className="form-control mb-3"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-success w-50"
+            onClick={addStudent}
+          >
+            Add Student
+          </button>
+
+          <button
+            className="btn btn-primary w-50"
+            onClick={() => updateStudent(editId)}
+          >
+            Update Student
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    {/* Right Side Student List */}
+    <div className="col-md-8">
+      <div className="card shadow p-4">
+
+        <h2 className="mb-4">
+          Student List
+        </h2>
+        <input type="text" 
+          className="form-control mb-3"
+          placeholder="Search students..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {students
+        .filter((student) => 
+          student.name.toLowerCase().includes(search.toLowerCase()) ||
+          student.roll_no.toLowerCase().includes(search.toLowerCase()) ||
+          student.department.toLowerCase().includes(search.toLowerCase()) ||
+          student.email.toLowerCase().includes(search.toLowerCase())
+        )
+        .map((student) => (
+          <div
+            key={student.id}
+            className="card shadow-sm p-3 mb-3 student-card"
+          >
+          <div className="d-flex align-items-center mb-3">
+             <img src={`https://ui-avatars.com/api/?name=${student.name}&background=6f42c1&color=fff`}
+                         alt="avatar"
+                    className="rounded-circle me-3"
+                    width="50"
+                    height="50"
+                     />
+
+               <h4 className="text-primary m-0">
+                  {student.name}
+               </h4>
+
+          </div>
+            <p>
+              <b>Roll No:</b> {student.roll_no}
+            </p>
+
+            <p>
+              <b>Department:</b> {student.department}
+            </p>
+
+            <p>
+              <b>Email:</b> {student.email}
+            </p>
+
+            <div className="d-flex gap-2">
+
+              <button
+                className="btn btn-danger"
+                onClick={() => deleteStudent(student.id)}
+              >
+                Delete
+              </button>
+
+              <button
+                className="btn btn-warning"
+                onClick={() => {
+                  setName(student.name);
+                  setRollNo(student.roll_no);
+                  setDepartment(student.department);
+                  setEmail(student.email);
+                  setEditId(student.id);
+                }}
+              >
+                Edit
+              </button>
+
+            </div>
+
+          </div>
+        ))}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+    </>
   );
 }
 
