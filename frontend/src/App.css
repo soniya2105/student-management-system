@@ -1,97 +1,212 @@
-body{
-    background-color: #f5f7fb;
-    margin: 0;
-    padding: 0;
+/* ===========================
+   GLOBAL STYLES
+=========================== */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #f3f4ff 0%, #eef2ff 100%);
 }
 
-.dashboard{
-    min-height: 100vh;
+.dashboard {
+  min-height: 100vh;
+  padding: 20px;
 }
 
-.navbar-custom{
-    background-color: #4b0082;
+/* ===========================
+   NAVBAR
+=========================== */
+
+.navbar {
+  min-height: 70px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.navbar-custom,
+.bg-primary {
+  background: linear-gradient(90deg, #4b0082, #6a0dad) !important;
+}
+
+/* ===========================
+   CARDS
+=========================== */
+
+.card,
 .form-card,
 .student-card,
-.stats-card{
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.student-card{
-    transition: 0.3s;
-}
-
-.student-card:hover{
-    transform: translateY(-5px);
-}
-
-.btn-custom{
-    background-color: #4b0082;
-    color: white;
-    border: none;
-}
-
-.btn-custom:hover{
-    background-color: #5e17eb;
-    color: white;
-}
-
-.title{
-    font-weight: bold;
-}
-
-.input-group{
-    margin-bottom: 15px;
-}
-.bg-primary{
-  background:linear-gradient(90deg, #4b0082, #6a0dad)!important;
-}
-.navbar{
-  min-height: 70px;
- 
-}
-.card {
+.stats-card {
   border: none;
   border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  transition: 0.3s;
-}
-
-.btn {
-  border-radius: 10px;
-}
-
-.form-control {
-  border-radius: 10px;
-}
-
+.card,
 .student-card {
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
-body {
-  background: linear-gradient(
-    135deg,
-    #f3f4ff 0%,
-    #eef2ff 100%
-  );
+
+.card:hover,
+.student-card:hover {
+  transform: translateY(-5px);
 }
+
+/* ===========================
+   STATISTICS CARDS
+=========================== */
 
 .stats-card {
-  background: linear-gradient(
-    135deg,
-    #6f42c1,
-    #8a63d2
-  );
+  background: linear-gradient(135deg, #6f42c1, #8a63d2);
   color: white;
 }
 
 .stats-card h2,
 .stats-card h5 {
   color: white;
+  font-weight: bold;
+}
+
+/* ===========================
+   FORM
+=========================== */
+
+.form-control {
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.form-control:focus {
+  border-color: #6f42c1;
+  box-shadow: 0 0 8px rgba(111, 66, 193, 0.3);
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.btn {
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.btn-custom {
+  background-color: #4b0082;
+  color: white;
+  border: none;
+}
+
+.btn-custom:hover {
+  background-color: #5e17eb;
+  color: white;
+}
+
+/* ===========================
+   STUDENT CARD
+=========================== */
+
+.student-card {
+  border-left: 5px solid #6f42c1;
+}
+
+.student-avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ===========================
+   TOP STUDENTS
+=========================== */
+
+.student-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.student-box img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.student-box h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.student-box p {
+  margin: 0;
+  color: gray;
+}
+
+.student-box small {
+  color: #6f42c1;
+  font-weight: 600;
+}
+
+/* ===========================
+   TITLES
+=========================== */
+
+.title {
+  font-weight: bold;
+}
+
+.search-box {
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   CHARTS
+=========================== */
+
+.chart-card {
+  border-radius: 20px;
+  padding: 20px;
+}
+
+/* ===========================
+   BADGES
+=========================== */
+
+.badge {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width: 768px) {
+
+  .dashboard {
+    padding: 10px;
+  }
+
+  .stats-card {
+    margin-bottom: 20px;
+  }
+
+  .student-box {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .navbar {
+    min-height: 60px;
+  }
 }

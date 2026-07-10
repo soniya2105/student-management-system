@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
+
 import Navbar from "./components/navbar";
-import {FaUserGraduate } from "react-icons/fa";
-import { MdSchool } from "react-icons/md";
-import { FaChartLine } from "react-icons/fa"; 
+import StatsCards from "./components/statscards";
+import StudentForm from "./components/studentform";
+import StudentTable from "./components/studenttable";
+import TopStudents from "./components/topstudents";
+import Charts from "./components/charts";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+import {ClipLoader} from "react-spinners";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -15,6 +24,7 @@ function App() {
   const [email, setEmail] = useState("");
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Fetch students
   useEffect(() => {
@@ -22,6 +32,7 @@ function App() {
   }, []);
 
   const fetchStudents = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "http://127.0.0.1:8000/api/students/"
@@ -29,6 +40,9 @@ function App() {
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -45,7 +59,7 @@ function App() {
         }
       );
 
-      alert("Student Added Successfully!");
+      toast.success("Student Added Successfully!");
 
       setName("");
       setRollNo("");
@@ -57,237 +71,155 @@ function App() {
       console.error("Error adding student:", error);
     }
   };
-  //delete student
-  const deleteStudent=async(id)=>{
-    try{
+
+  // Delete student
+  const deleteStudent = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover this student!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+    if (!result.isConfirmed) {
+      return;
+    }
+    try {
       await axios.delete(
         `http://127.0.0.1:8000/api/students/${id}/`
       );
-      alert("Student Deleetd Succesfully!");
+
+      toast.success("Student Deleted Successfully!");
+
       fetchStudents();
+    } catch (error) {
+      toast.error("Error deleting student. Please try again.");
+      console.error("Deleting error:", error);
     }
-    catch(error){
-      console.error("deleting error:",error);
-    }
-  } ; 
-  //update student
-  const updateStudent=async(id)=>{
+  };
+
+  // Update student
+  const updateStudent = async (id) => {
     console.log("Updating student with ID:", id);
-    try{
+
+    try {
       await axios.put(
         `http://127.0.0.1:8000/api/students/update/${id}/`,
         {
-          name:name,
+          name: name,
           roll_no: rollNo,
           department: department,
           email: email,
         }
       );
-      alert("Student Updated Successfully!");
+
+      toast.success("Student Updated Successfully!");
+
       setName("");
       setRollNo("");
       setDepartment("");
       setEmail("");
       setEditId(null);
+
       fetchStudents();
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
-      if (error.response){
-        console.error("Error updating student:", error.response.data);
+
+      if (error.response) {
+        console.error(
+          "Error updating student:",
+          error.response.data
+        );
+      } else {
+        console.log(error.message);
       }
-      else {
-        console.log(error.message)
-      }
-      
     }
   };
+  if (loading) {
+    return(
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh"
+      }}
+      >
+        <ClipLoader
+         color="#6f42c1"
+         size={70} />
+      </div>
+    );
+  }
+  
   return (
-    <>
+  <>
     <Navbar />
-    {/* Statistics Section */}
+
+    {/* Statistics Cards */}
+    <StatsCards students={students} />
+
     <div className="container mt-4">
       <div className="row">
 
-        <div className="col-md-4">
-          <div className="card shadow p-3 text-center stats-card">
-            <h5>
-              <FaUserGraduate className="me-2" />
-              Total Students
-            </h5>
-            <h2>{students.length}</h2>
-          </div>
+        {/* Student Form */}
+        <div className="col-lg-3 col-md-4 mb-4">
+          <StudentForm
+            name={name}
+            setName={setName}
+            rollNo={rollNo}
+            setRollNo={setRollNo}
+            department={department}
+            setDepartment={setDepartment}
+            email={email}
+            setEmail={setEmail}
+            addStudent={addStudent}
+            updateStudent={updateStudent}
+            editId={editId}
+          />
         </div>
 
-        <div className="col-md-4">
-          <div className="card shadow p-3 text-center stats-card">
-            <h5>
-              <MdSchool className="me-2" />
-              Departments
-            </h5>
-            <h2>{new Set(students.map(student => student.department)).size}</h2>
-          </div>
+        {/* Student List */}
+        <div className="col-lg-6 col-md-8 mb-4">
+          <StudentTable
+            students={students}
+            search={search}
+            setSearch={setSearch}
+            deleteStudent={deleteStudent}
+            setName={setName}
+            setRollNo={setRollNo}
+            setDepartment={setDepartment}
+            setEmail={setEmail}
+            setEditId={setEditId}
+          />
         </div>
 
-        <div className="col-md-4">
-          <div className="card shadow p-3 text-center stats-card">
-            <h5>
-              <FaChartLine className="me-2" />
-              Attendance
-            </h5>
-            <h2>95%</h2>
-          </div>
-        </div>
-
-      </div>
-    </div>
-    
-      <div className="container mt-4">
-  <div className="row">
-
-    {/* Left Side Form */}
-    <div className="col-md-4">
-      <div className="card shadow p-4">
-
-        <h3 className="text-center mb-4">
-          Student Form
-        </h3>
-
-        <input
-          type="text"
-          className="form-control mb-3"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          type="text"
-          className="form-control mb-3"
-          placeholder="Roll No"
-          value={rollNo}
-          onChange={(e) => setRollNo(e.target.value)}
-        />
-
-        <input
-          type="text"
-          className="form-control mb-3"
-          placeholder="Department"
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-        />
-
-        <input
-          type="email"
-          className="form-control mb-3"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-success w-50"
-            onClick={addStudent}
-          >
-            Add Student
-          </button>
-
-          <button
-            className="btn btn-primary w-50"
-            onClick={() => updateStudent(editId)}
-          >
-            Update Student
-          </button>
+        {/* Top Students */}
+        <div className="col-lg-3 col-md-12 mb-4">
+          <TopStudents students={students} />
         </div>
 
       </div>
     </div>
 
-    {/* Right Side Student List */}
-    <div className="col-md-8">
-      <div className="card shadow p-4">
-
-        <h2 className="mb-4">
-          Student List
-        </h2>
-        <input type="text" 
-          className="form-control mb-3"
-          placeholder="Search students..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        {students
-        .filter((student) => 
-          student.name.toLowerCase().includes(search.toLowerCase()) ||
-          student.roll_no.toLowerCase().includes(search.toLowerCase()) ||
-          student.department.toLowerCase().includes(search.toLowerCase()) ||
-          student.email.toLowerCase().includes(search.toLowerCase())
-        )
-        .map((student) => (
-          <div
-            key={student.id}
-            className="card shadow-sm p-3 mb-3 student-card"
-          >
-          <div className="d-flex align-items-center mb-3">
-             <img src={`https://ui-avatars.com/api/?name=${student.name}&background=6f42c1&color=fff`}
-                         alt="avatar"
-                    className="rounded-circle me-3"
-                    width="50"
-                    height="50"
-                     />
-
-               <h4 className="text-primary m-0">
-                  {student.name}
-               </h4>
-
-          </div>
-            <p>
-              <b>Roll No:</b> {student.roll_no}
-            </p>
-
-            <p>
-              <b>Department:</b> {student.department}
-            </p>
-
-            <p>
-              <b>Email:</b> {student.email}
-            </p>
-
-            <div className="d-flex gap-2">
-
-              <button
-                className="btn btn-danger"
-                onClick={() => deleteStudent(student.id)}
-              >
-                Delete
-              </button>
-
-              <button
-                className="btn btn-warning"
-                onClick={() => {
-                  setName(student.name);
-                  setRollNo(student.roll_no);
-                  setDepartment(student.department);
-                  setEmail(student.email);
-                  setEditId(student.id);
-                }}
-              >
-                Edit
-              </button>
-
-            </div>
-
-          </div>
-        ))}
-
-      </div>
-    </div>
-
-  </div>
-</div>
-    </>
-  );
+    {/* Charts */}
+    <Charts students={students} />
+    <ToastContainer  
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="colored"
+  />
+  </>
+);
 }
 
 export default App;
