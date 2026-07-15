@@ -35,7 +35,7 @@ function App() {
     setLoading(true);
     try {
       const response = await axios.get(
-        "http://127.0.0.1:8000/api/students/"
+        "https://student-management-system-qnk3.onrender.com/api/students/"
       );
       setStudents(response.data);
     } catch (error) {
@@ -50,7 +50,7 @@ function App() {
   const addStudent = async () => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/students/",
+        "https://student-management-system-qnk3.onrender.com/api/students/",
         {
           name: name,
           roll_no: rollNo,
@@ -89,7 +89,7 @@ function App() {
     }
     try {
       await axios.delete(
-        `http://127.0.0.1:8000/api/students/${id}/`
+        `https://student-management-system-qnk3.onrender.com/api/students/${id}/`
       );
 
       toast.success("Student Deleted Successfully!");
@@ -107,7 +107,7 @@ function App() {
 
     try {
       await axios.put(
-        `http://127.0.0.1:8000/api/students/update/${id}/`,
+        `https://student-management-system-qnk3.onrender.com/api/students/update/${id}/`,
         {
           name: name,
           roll_no: rollNo,
