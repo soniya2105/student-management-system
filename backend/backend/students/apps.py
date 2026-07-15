@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class StudentsConfig(AppConfig):
-    name = 'backend.students'
+    name = 'students'
