@@ -154,6 +154,7 @@ function App() {
     );
   }
   
+  
   return (
   <>
     <Navbar />
@@ -208,7 +209,7 @@ function App() {
     <Charts students={students} />
     <ToastContainer  
     position="top-right"
-    autoClose={5000}
+    autoClose={3000}
     hideProgressBar={false}
     newestOnTop={false}
     closeOnClick
@@ -218,6 +219,7 @@ function App() {
     pauseOnHover
     theme="colored"
   />
+  
   </>
 );
 }
